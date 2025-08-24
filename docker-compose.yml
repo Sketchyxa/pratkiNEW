@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: pratki_bot
+    restart: unless-stopped
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017/pratki
+      - BOT_TOKEN=${BOT_TOKEN}
+      - ADMIN_USER_ID=${ADMIN_USER_ID}
+      - LOG_LEVEL=INFO
+      - DEBUG=false
+    depends_on:
+      - mongo
+    volumes:
+      - ./logs:/app/logs
+      - ./assets:/app/assets
+    networks:
+      - pratki_network
+
+  mongo:
+    image: mongo:7.0
+    container_name: pratki_mongo
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=pratki
+    volumes:
+      - mongo_data:/data/db
+      - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - pratki_network
+
+volumes:
+  mongo_data:
+
+networks:
+  pratki_network:
+    driver: bridge

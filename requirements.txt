@@ -1,0 +1,13 @@
+aiogram==3.4.1
+motor==3.3.2
+pymongo==4.6.0
+aiofiles==23.2.1
+python-dotenv==1.0.0
+pydantic==2.5.2
+pydantic-settings==2.1.0
+loguru==0.7.2
+asyncio-mqtt==0.13.0
+motor[srv]==3.3.2
+mysql-connector-python==8.2.0
+pandas==2.1.4
+bson==0.5.10
