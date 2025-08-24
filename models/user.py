@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Annotated
+from typing import Optional, List, Dict, Any, Annotated, Union
 from pydantic import BaseModel, Field, BeforeValidator
 from bson import ObjectId
 
@@ -12,13 +12,31 @@ def validate_object_id(v):
     raise ValueError("Invalid ObjectId")
 
 
+def validate_datetime(v):
+    if isinstance(v, datetime):
+        return v
+    if isinstance(v, str):
+        try:
+            return datetime.fromisoformat(v.replace('Z', '+00:00'))
+        except ValueError:
+            try:
+                return datetime.strptime(v, '%Y-%m-%d %H:%M:%S.%f')
+            except ValueError:
+                try:
+                    return datetime.strptime(v, '%Y-%m-%d %H:%M:%S')
+                except ValueError:
+                    raise ValueError(f"Invalid datetime format: {v}")
+    raise ValueError(f"Invalid datetime: {v}")
+
+
 PyObjectId = Annotated[ObjectId, BeforeValidator(validate_object_id)]
+PyDateTime = Annotated[datetime, BeforeValidator(validate_datetime)]
 
 
 class UserCard(BaseModel):
     card_id: str
     quantity: int = 1
-    obtained_at: datetime = Field(default_factory=datetime.utcnow)
+    obtained_at: PyDateTime = Field(default_factory=datetime.utcnow)
 
 
 class UserNFT(BaseModel):
