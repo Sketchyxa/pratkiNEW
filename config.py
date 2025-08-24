@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     debug: bool = Field(default=False, env="DEBUG")
     log_level: str = Field(default="INFO", env="LOG_LEVEL")
     
+    # Rate Limiting
+    rate_limit_messages: int = Field(default=5, env="RATE_LIMIT_MESSAGES")
+    rate_limit_callbacks: int = Field(default=10, env="RATE_LIMIT_CALLBACKS")
+    rate_limit_window: int = Field(default=60, env="RATE_LIMIT_WINDOW")
+    
     # Game Configuration
     daily_card_cooldown_hours: int = 2  # Кулдаун 2 часа
     cards_for_upgrade: int = 3
@@ -49,5 +54,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"
 
 settings = Settings()
